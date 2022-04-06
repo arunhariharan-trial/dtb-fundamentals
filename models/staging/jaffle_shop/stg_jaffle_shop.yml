@@ -1,0 +1,35 @@
+version: 2
+
+models: 
+  - name: stg_customers
+    description: stage for customers with one row for every customer id
+    columns:
+      - name: customer_id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_orders
+    description: stage for orders with one row for every order
+    columns:
+      - name: order_id
+        tests:
+          - unique
+          - not_null
+      
+      - name: status
+        description: "{{ doc('order_status_desc') }}"
+        tests:
+          - accepted_values:
+              values:
+                - completed
+                - shipped
+                - returned
+                - return_pending
+                - placed
+
+      - name: customer_id
+        tests: 
+          - relationships:
+              to: ref('stg_customers')
+              field: customer_id
